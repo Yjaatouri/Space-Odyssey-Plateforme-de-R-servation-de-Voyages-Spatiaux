@@ -7,114 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'space-dark': '#0a0a18',
-                        'space-blue': '#1a1a2e',
-                        'space-purple': '#16213e',
-                        'neon-blue': '#0ea5e9',
-                        'neon-purple': '#8b5cf6',
-                        'neon-cyan': '#06b6d4',
-                    },
-                    fontFamily: {
-                        'orbitron': ['Orbitron', 'sans-serif'],
-                        'exo': ['Exo 2', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            background: linear-gradient(to bottom, #0a0a18, #1a1a2e, #16213e);
-            background-attachment: fixed;
-        }
-        
-        .star {
-            position: absolute;
-            background-color: white;
-            border-radius: 50%;
-            animation: twinkle 5s infinite;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-        
-        .glow {
-            box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
-        }
-        
-        .text-glow {
-            text-shadow: 0 0 10px rgba(14, 165, 233, 0.7);
-        }
-        
-        .content-card {
-            background: rgba(26, 26, 46, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(14, 165, 233, 0.3);
-            border-radius: 15px;
-        }
-        
-        .nav-link {
-            position: relative;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(to right, #0ea5e9, #8b5cf6);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(to right, #0ea5e9, #8b5cf6);
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(14, 165, 233, 0.4);
-        }
-        
-        .timeline-item {
-            position: relative;
-            padding-left: 2rem;
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, #0ea5e9, #8b5cf6);
-        }
-        
-        .timeline-item::after {
-            content: '';
-            position: absolute;
-            left: -4px;
-            top: 0;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #0ea5e9;
-        }
-    </style>
+    <link rel="stylesheet" href="about.css">
+
 </head>
 <body class="text-white font-exo min-h-screen">
     <!-- Stars Background -->
@@ -349,32 +243,6 @@
         </div>
     </footer>
 
-    <script>
-        // Create stars background
-        function createStars() {
-            const container = document.getElementById('stars-container');
-            const starCount = 150;
-            
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-                
-                const size = Math.random() * 2 + 1;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                
-                star.style.animationDelay = `${Math.random() * 5}s`;
-                
-                container.appendChild(star);
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            createStars();
-        });
-    </script>
+    <script src="about.js"></script>
 </body>
 </html>
