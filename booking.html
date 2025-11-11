@@ -14,10 +14,8 @@
 </head>
 
 <body class="text-white font-exo min-h-screen">
-  <!-- Stars Background -->
   <div id="stars-container"></div>
 
-  <!-- Navigation -->
   <nav class="bg-space-dark/80 backdrop-blur-md border-b border-neon-blue/20 sticky top-0 z-50">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3">
@@ -35,32 +33,10 @@
         <a href="about.html" class="nav-link hover:text-neon-blue transition-colors">About</a>
         <a href="login.html" class="nav-link hover:text-neon-blue transition-colors">Login</a>
       </div>
-
-      <!-- Mobile menu button -->
-      <div class="md:hidden">
-        <button id="mobile-menu-button" class="text-white focus:outline-none">
-          <i class="fas fa-bars text-xl"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="mobile-menu md:hidden bg-space-dark/90 backdrop-blur-md">
-      <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
-        <a href="index.html" class="hover:text-neon-blue transition-colors py-2 border-b border-neon-blue/20">Home</a>
-        <a href="destinations.html"
-          class="hover:text-neon-blue transition-colors py-2 border-b border-neon-blue/20">Destinations</a>
-        <a href="booking.html"
-          class="hover:text-neon-blue transition-colors py-2 border-b border-neon-blue/20 text-neon-blue">Booking</a>
-        <a href="about.html" class="hover:text-neon-blue transition-colors py-2 border-b border-neon-blue/20">About</a>
-        <a href="login.html" class="hover:text-neon-blue transition-colors py-2">Login</a>
-      </div>
     </div>
   </nav>
 
-  <!-- Main Content -->
   <main class="container mx-auto px-4 py-12 relative z-10">
-    <!-- Header Section -->
     <section class="text-center mb-12">
       <h1 class="font-orbitron text-4xl md:text-5xl font-bold mb-4 text-glow">
         Book Your Space Journey
@@ -71,23 +47,18 @@
       </p>
     </section>
 
-    <!-- Booking Form -->
     <div class="form-container max-w-4xl mx-auto p-8">
       <form id="booking-form">
-        <!-- Journey Details Section -->
         <div class="mb-8">
           <h2 class="font-orbitron text-2xl mb-6">Journey Details</h2>
 
-          <!-- Destination -->
           <div class="mb-6">
             <label class="block mb-2 text-gray-300">Destination</label>
             <select class="h-12" id="destination" required>
               <option value="">Select your destination</option>
-              <!-- Options will be populated by JavaScript -->
             </select>
 
-            <!-- Destination Info Display -->
-            <div id="destination-info" class="destination-info hidden">
+            <div id="destination-info" class="destination-info hidden mt-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h3 class="font-orbitron text-neon-blue mb-2" id="destination-name"></h3>
@@ -116,169 +87,73 @@
                   </div>
                 </div>
               </div>
+              <!-- 👇 Total price section -->
+              <div class="mt-4 text-right text-lg font-bold text-neon-purple" id="total-price-display"></div>
             </div>
           </div>
 
-          <!-- Departure Date -->
           <div class="mb-6">
             <label class="block mb-2 text-gray-300">Departure Date</label>
             <input type="date" id="departure-date" required />
             <div class="error-message" id="departure-date-error"></div>
           </div>
 
-          <!-- Number of Passengers -->
           <div class="mb-6">
             <label class="block mb-3 text-gray-300">Number of Passengers</label>
             <div class="flex flex-wrap gap-4">
-              <label class="flex items-center cursor-pointer">
-                <input type="radio" name="passengers" value="solo" class="mr-2" checked />
-                <span>Solo Traveler</span>
-              </label>
-              <label class="flex items-center cursor-pointer">
-                <input type="radio" name="passengers" value="couple" class="mr-2" />
-                <span>Couple (2)</span>
-              </label>
-              <label class="flex items-center cursor-pointer">
-                <input type="radio" name="passengers" value="group" class="mr-2" />
-                <span>Group (3-6)</span>
-              </label>
+              <label><input type="radio" name="passengers" value="solo" class="mr-2" checked /> Solo</label>
+              <label><input type="radio" name="passengers" value="couple" class="mr-2" /> Couple (2)</label>
+              <label><input type="radio" name="passengers" value="group" class="mr-2" /> Group (3–6)</label>
             </div>
           </div>
 
-          <!-- Accommodation Type -->
-          <div class="mb-6 accommodations-section" id="accommodations-section">
+          <div class="mb-6" id="accommodations-section">
             <label class="block mb-3 text-gray-300">Accommodation Type</label>
-            <div id="accommodations-container" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <!-- Accommodation cards will be populated by JavaScript -->
-            </div>
+            <div id="accommodations-container" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
             <input type="hidden" id="accommodation" value="" />
             <div class="error-message" id="accommodation-error"></div>
           </div>
         </div>
+        <!-- Suit Size – hidden by default -->
+        <div id="suit-size-section" class="mb-6 hidden">
+          <label class="block mb-2 text-gray-300">Suit Size <span class="text-red-400">*</span></label>
+          <select id="suit-size" class="h-12" required>
+            <option value="">-- Select size --</option>
+            <option value="S">Small</option>
+            <option value="M">Medium</option>
+            <option value="L">Large</option>
+            <option value="XL">X-Large</option>
+          </select>
+          <div class="error-message" id="suit-size-error"></div>
+        </div>
 
-        <!-- Personal Information Section -->
         <div class="mb-8">
           <h2 class="font-orbitron text-2xl mb-6">Personal Information</h2>
-
-          <!-- Passenger Forms Container -->
           <div id="passenger-forms-container">
-            <!-- Primary Passenger Form -->
             <div class="passenger-form" id="passenger-form-0">
-              <div class="passenger-header">
-                <h3 class="font-orbitron text-neon-blue">
-                  Primary Passenger
-                </h3>
-                <!-- No remove button for primary passenger -->
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- First Name -->
-                <div>
-                  <label class="block mb-2 text-gray-300">First Name</label>
-                  <input type="text" name="first-name[]" placeholder="Enter your first name" required
-                    data-validation="name" />
-                  <div class="error-message" data-error="first-name"></div>
-                </div>
-
-                <!-- Last Name -->
-                <div>
-                  <label class="block mb-2 text-gray-300">Last Name</label>
-                  <input type="text" name="last-name[]" placeholder="Enter your last name" required
-                    data-validation="name" />
-                  <div class="error-message" data-error="last-name"></div>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Email -->
-                <div>
-                  <label class="block mb-2 text-gray-300">Email Address</label>
-                  <input type="email" name="email[]" placeholder="Enter your email" required data-validation="email" />
-                  <div class="error-message" data-error="email"></div>
-                </div>
-
-                <!-- Phone -->
-                <div>
-                  <label class="block mb-2 text-gray-300">Phone Number</label>
-                  <input type="tel" name="phone[]" placeholder="Enter your phone number" required
-                    data-validation="phone" />
-                  <div class="error-message" data-error="phone"></div>
-                </div>
-              </div>
-
-              <!-- Special Requirements -->
-              <div class="mb-6">
-                <label class="block mb-2 text-gray-300">Special Requirements</label>
-                <textarea class="pl-3 pt-1" name="special-requirements[]" rows="4"
-                  placeholder="Any special requirements or notes..."></textarea>
-              </div>
+              <h3 class="font-orbitron text-neon-blue">Primary Passenger</h3>
+              <input type="text" name="first-name[]" placeholder="First Name" required data-validation="name" />
+              <input type="text" name="last-name[]" placeholder="Last Name" required data-validation="name" />
+              <input type="email" name="email[]" placeholder="Email" required data-validation="email" />
+              <input type="tel" name="phone[]" placeholder="Phone" required data-validation="phone" />
             </div>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="flex flex-col md:flex-row gap-4 mb-6">
-            <button type="button" id="add-passenger-btn"
-              class="btn-secondary text-white px-8 py-3 rounded-lg font-bold text-lg flex-1">
-              Add Passenger
-            </button>
-          </div>
+          <button type="button" id="add-passenger-btn" class="btn-secondary px-8 py-3 rounded-lg font-bold mt-4">
+            Add Passenger
+          </button>
         </div>
 
-        <button type="submit" class="btn-primary text-white px-8 py-4 rounded-lg font-bold text-lg w-full glow">
+        <button type="submit" class="btn-primary px-8 py-4 rounded-lg font-bold w-full glow">
           Confirm Booking
         </button>
-
-        <p class="text-center text-gray-400 text-sm mt-4">
-          By confirming, you agree to our
-          <a href="#" class="text-neon-blue hover:underline">Terms of Service</a>
-          and
-          <a href="#" class="text-neon-blue hover:underline">Space Travel Agreement</a>.
-        </p>
       </form>
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-space-dark border-t border-neon-blue/20 py-8 mt-12 relative z-10">
-    <div class="container mx-auto px-4">
-      <div class="flex flex-col md:flex-row justify-between items-center">
-        <div class="mb-4 md:mb-0">
-          <div class="flex items-center space-x-2 mb-2">
-            <div
-              class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center">
-              <i class="fas fa-rocket text-white text-sm"></i>
-            </div>
-            <span class="font-orbitron text-lg">SpaceVoyager</span>
-          </div>
-          <p class="text-gray-400 text-sm">
-            © 2023 SpaceVoyager. All rights reserved.
-          </p>
-        </div>
-
-        <div class="flex space-x-6 mb-4 md:mb-0">
-          <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
-            <i class="fab fa-youtube"></i>
-          </a>
-        </div>
-
-        <div class="text-center md:text-right">
-          <p class="text-gray-400 text-sm">
-            Contact us: info@spacevoyager.com
-          </p>
-          <p class="text-gray-400 text-sm">+1 (800) SPACE-TRIP</p>
-        </div>
-      </div>
-    </div>
-    <script src="booking.js"></script>
+  <footer class="bg-space-dark border-t border-neon-blue/20 py-8 mt-12 text-center">
+    <p class="text-gray-400 text-sm">© 2025 SpaceVoyager</p>
+    <script src="amin.js"></script>
   </footer>
 </body>
 

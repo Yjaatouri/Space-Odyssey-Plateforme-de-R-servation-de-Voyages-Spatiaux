@@ -239,3 +239,26 @@
         border-color: #10b981 !important;
         box-shadow: 0 0 5px rgba(16, 185, 129, 0.3) !important;
       }
+
+      /*  */
+
+      /* Stars */
+#stars-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.star {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle linear infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* Mobile menu open state */
+.mobile-menu { display: none; }
+.mobile-menu.open { display: block; }
+
+/* Button disabled style */
+button:disabled { cursor: not-allowed; }
