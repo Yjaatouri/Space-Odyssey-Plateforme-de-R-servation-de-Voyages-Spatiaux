@@ -1,13 +1,16 @@
-        const user = JSON.parse(localStorage.getItem("loggedUser"));
+const user = JSON.parse(localStorage.getItem("loggedUser"));
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+const navLogin = document.getElementById("nav-login");
 
-        if (user) {
-            const welcome = document.createElement("p");
-            welcome.className = "text-neon-blue font-orbitron mt-4 text-center";
-            welcome.textContent = ` Welcome, ${user.email}!`;
-            document.body.prepend(welcome);
-        }
 
-        // logged out
+if (user) {
+  const welcome = document.createElement("p");
+  welcome.className = "text-neon-blue font-orbitron mt-4 text-center";
+  welcome.textContent = ` Welcome, ${user.email}!`;
+  document.body.prepend(welcome);
+}
+
+// logged out
 // ===============================
 // SpaceVoyager - User Session System
 // ===============================
@@ -16,7 +19,7 @@
 
 
 // If no user → redirect to login page
- if (user) {
+if (user) {
   // Display welcome message
   const header = document.createElement("div");
   header.className = "text-center mt-6";
@@ -40,5 +43,6 @@
   header.appendChild(logoutBtn);
   document.body.prepend(header);
 }
-
-
+if (loggedUser && navLogin) {
+    navLogin.remove();
+}
