@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="login.css">
 </head>
 <body class="text-white font-exo min-h-screen">
+    
     <!-- Stars Background -->
     <div id="stars-container"></div>
     
@@ -54,13 +55,13 @@
                 
                 <form class="space-y-6">
                     <div>
-                        <label class="block text-gray-300 mb-2">Email Address</label>
-                        <input type="email" class="form-input w-full px-4 py-3" placeholder="Enter your email">
+                        <label  class="block text-gray-300 mb-2">Email Address</label>
+                        <input id="email" class="form-input w-full px-4 py-3 emailInput" placeholder="Enter your email">
                     </div>
                     
                     <div>
                         <label class="block text-gray-300 mb-2">Password</label>
-                        <input type="password" class="form-input w-full px-4 py-3" placeholder="Enter your password">
+                        <input id="password" class="form-input w-full px-4 py-3" placeholder="Enter your password">
                     </div>
                     
                     <div class="flex items-center justify-between">
@@ -71,7 +72,7 @@
                         <a href="#" class="text-neon-blue text-sm hover:underline">Forgot password?</a>
                     </div>
                     
-                    <button type="submit" class="btn-primary text-white w-full py-3 rounded-lg font-bold glow">
+                    <button id="buttonV" type="submit" class="btn-primary text-white w-full py-3 rounded-lg font-bold glow">
                         Login to Account
                     </button>
                 </form>
@@ -84,6 +85,11 @@
                 </div>
             </div>
             
+            <!-- Informational Note -->
+            <p class="text-center text-gray-400 text-sm mt-8 italic">
+                A login form is available on the Account/Login page.
+            </p>
+
             <!-- Features -->
             <div class="mt-12 grid grid-cols-1 gap-6">
                 <div class="flex items-start">
@@ -149,5 +155,6 @@
     </footer>
 
     <script src="login.js"></script>
+    <script src="validation.js"></script>
 </body>
 </html>

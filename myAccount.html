@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account - SpaceVoyager</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="text-white font-exo min-h-screen bg-space-dark">
+
+<nav class="bg-space-dark/80 backdrop-blur-md border-b border-neon-blue/20 sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center glow">
+                <i class="fas fa-rocket text-white"></i>
+            </div>
+            <a href="index.html" class="font-orbitron text-xl font-bold text-glow">SpaceVoyager</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mx-auto px-4 py-12 text-center">
+    <h1 class="font-orbitron text-4xl mb-6 text-glow">My Account</h1>
+    <p class="text-gray-300 text-xl mb-6">Welcome, <span id="account-email"></span>!</p>
+
+    <div class="mb-6">
+        <p class="text-gray-400">Account created on: <span id="account-date"></span></p>
+    </div>
+
+    <button id="logoutBtn" class="bg-gradient-to-r from-neon-blue to-neon-purple text-white px-6 py-3 rounded-lg font-bold glow hover:opacity-90 transition">
+        Logout
+    </button>
+</main>
+
+<script>
+// ===============================
+// My Account Page Logic
+// ===============================
+
+// Get logged user from localStorage
+const user = JSON.parse(localStorage.getItem("loggedUser"));
+
+// If no user → redirect to login page
+if (!user) {
+    window.location.href = "login.html";
+}
+
+// Show user info
+document.getElementById("account-email").textContent = user.email;
+document.getElementById("account-date").textContent = user.date;
+
+// Logout
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("loggedUser");
+    window.location.href = "login.html";
+});
+</script>
+
+</body>
+</html>
