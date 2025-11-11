@@ -6,26 +6,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book Your Journey — SpaceVoyager</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="booking.css">
+  <style>
+    .hidden { display: none !important; }
+    .error-message { color: #f87171; font-size: 0.875rem; }
+    .accommodation-card {
+      @apply p-4 border border-gray-600 rounded-lg cursor-pointer transition-all bg-space-dark/50 hover:border-neon-blue;
+    }
+    .accommodation-card.selected {
+      @apply border-neon-blue ring-2 ring-neon-blue/50;
+    }
+  </style>
 </head>
 
-<body class="text-white font-exo min-h-screen">
+<body class="text-white font-exo min-h-screen bg-black">
   <div id="stars-container"></div>
 
   <nav class="bg-space-dark/80 backdrop-blur-md border-b border-neon-blue/20 sticky top-0 z-50">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3">
-        <div
-          class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center glow">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center glow">
           <i class="fas fa-rocket text-white"></i>
         </div>
         <a href="index.html" class="font-orbitron text-xl font-bold text-glow">SpaceVoyager</a>
       </div>
-
       <div class="hidden md:flex space-x-8">
         <a href="index.html" class="nav-link hover:text-neon-blue transition-colors">Home</a>
         <a href="destinations.html" class="nav-link hover:text-neon-blue transition-colors">Destinations</a>
@@ -42,62 +48,51 @@
         Book Your Space Journey
       </h1>
       <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
-        Begin your adventure to the stars. Fill out the form below to reserve
-        your spot on our next space voyage.
+        Begin your adventure to the stars. Fill out the form below to reserve your spot.
       </p>
     </section>
 
-    <div class="form-container max-w-4xl mx-auto p-8">
-      <form id="booking-form">
+    <div class="form-container max-w-4xl mx-auto p-8 bg-space-dark/50 backdrop-blur-sm rounded-xl border border-neon-blue/20">
+      <form id="booking-form" novalidate>
+        <!-- Journey Details -->
         <div class="mb-8">
-          <h2 class="font-orbitron text-2xl mb-6">Journey Details</h2>
+          <h2 class="font-orbitron text-2xl mb-6 text-neon-blue">Journey Details</h2>
 
+          <!-- Destination -->
           <div class="mb-6">
             <label class="block mb-2 text-gray-300">Destination</label>
-            <select class="h-12" id="destination" required>
+            <select class="h-12 w-full rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white focus:border-neon-blue focus:outline-none" id="destination" required>
               <option value="">Select your destination</option>
             </select>
-
-            <div id="destination-info" class="destination-info hidden mt-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h3 class="font-orbitron text-neon-blue mb-2" id="destination-name"></h3>
-                  <p class="text-sm text-gray-300" id="destination-description"></p>
-                </div>
-                <div class="text-sm">
-                  <div class="flex justify-between mb-1">
-                    <span class="text-gray-400">Travel Duration:</span>
-                    <span id="destination-duration"></span>
-                  </div>
-                  <div class="flex justify-between mb-1">
-                    <span class="text-gray-400">Distance:</span>
-                    <span id="destination-distance"></span>
-                  </div>
-                  <div class="flex justify-between mb-1">
-                    <span class="text-gray-400">Gravity:</span>
-                    <span id="destination-gravity"></span>
-                  </div>
-                  <div class="flex justify-between mb-1">
-                    <span class="text-gray-400">Temperature:</span>
-                    <span id="destination-temperature"></span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-400">Price:</span>
-                    <span class="font-bold text-neon-cyan" id="destination-price"></span>
-                  </div>
-                </div>
-              </div>
-              <!-- 👇 Total price section -->
-              <div class="mt-4 text-right text-lg font-bold text-neon-purple" id="total-price-display"></div>
-            </div>
+            <div class="error-message mt-1" id="destination-error"></div>
           </div>
 
+          <!-- Destination Info -->
+          <div id="destination-info" class="destination-info hidden mt-6 p-6 bg-space-dark/70 rounded-lg border border-neon-blue/30">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h3 class="font-orbitron text-neon-blue mb-2" id="destination-name"></h3>
+                <p class="text-sm text-gray-300" id="destination-description"></p>
+              </div>
+              <div class="text-sm">
+                <div class="flex justify-between mb-1"><span class="text-gray-400">Travel Duration:</span><span id="destination-duration"></span></div>
+                <div class="flex justify-between mb-1"><span class="text-gray-400">Distance:</span><span id="destination-distance"></span></div>
+                <div class="flex justify-between mb-1"><span class="text-gray-400">Gravity:</span><span id="destination-gravity"></span></div>
+                <div class="flex justify-between mb-1"><span class="text-gray-400">Temperature:</span><span id="destination-temperature"></span></div>
+                <div class="flex justify-between"><span class="text-gray-400">Price:</span><span class="font-bold text-neon-cyan" id="destination-price"></span></div>
+              </div>
+            </div>
+            <div class="mt-4 text-right text-lg font-bold text-neon-purple" id="total-price-display"></div>
+          </div>
+
+          <!-- Departure Date -->
           <div class="mb-6">
             <label class="block mb-2 text-gray-300">Departure Date</label>
-            <input type="date" id="departure-date" required />
+            <input type="date" id="departure-date" required class="h-12 w-full rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white focus:border-neon-blue focus:outline-none" />
             <div class="error-message" id="departure-date-error"></div>
           </div>
 
+          <!-- Passengers -->
           <div class="mb-6">
             <label class="block mb-3 text-gray-300">Number of Passengers</label>
             <div class="flex flex-wrap gap-4">
@@ -107,6 +102,7 @@
             </div>
           </div>
 
+          <!-- Accommodations -->
           <div class="mb-6" id="accommodations-section">
             <label class="block mb-3 text-gray-300">Accommodation Type</label>
             <div id="accommodations-container" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
@@ -114,10 +110,11 @@
             <div class="error-message" id="accommodation-error"></div>
           </div>
         </div>
-        <!-- Suit Size – hidden by default -->
+
+        <!-- Suit Size (Hidden by default) -->
         <div id="suit-size-section" class="mb-6 hidden">
           <label class="block mb-2 text-gray-300">Suit Size <span class="text-red-400">*</span></label>
-          <select id="suit-size" class="h-12" required>
+          <select id="suit-size" class="h-12 w-full rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white focus:border-neon-blue focus:outline-none" required>
             <option value="">-- Select size --</option>
             <option value="S">Small</option>
             <option value="M">Medium</option>
@@ -127,24 +124,44 @@
           <div class="error-message" id="suit-size-error"></div>
         </div>
 
+        <!-- Personal Information -->
         <div class="mb-8">
-          <h2 class="font-orbitron text-2xl mb-6">Personal Information</h2>
-          <div id="passenger-forms-container">
-            <div class="passenger-form" id="passenger-form-0">
-              <h3 class="font-orbitron text-neon-blue">Primary Passenger</h3>
-              <input type="text" name="first-name[]" placeholder="First Name" required data-validation="name" />
-              <input type="text" name="last-name[]" placeholder="Last Name" required data-validation="name" />
-              <input type="email" name="email[]" placeholder="Email" required data-validation="email" />
-              <input type="tel" name="phone[]" placeholder="Phone" required data-validation="phone" />
+          <h2 class="font-orbitron text-2xl mb-6 text-neon-blue">Personal Information</h2>
+
+          <!-- Primary Passenger -->
+          <div class="passenger-form" id="passenger-form-0">
+            <h3 class="font-orbitron text-neon-blue mb-4">Primary Passenger</h3>
+            <div class="mb-4">
+              <input type="text" name="first-name[]" placeholder="First Name" required data-validation="name"
+                class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white focus:border-neon-blue focus:outline-none" />
+              <div class="error-message mt-1 text-sm"></div>
+            </div>
+            <div class="mb-4">
+              <input type="text" name="last-name[]" placeholder="Last Name" required data-validation="name"
+                class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white focus:border-neon-blue focus:outline-none" />
+              <div class="error-message mt-1 text-sm"></div>
+            </div>
+            <div class="mb-4">
+              <input type="email" name="email[]" placeholder="Email" required data-validation="email"
+                class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white focus:border-neon-blue focus:outline-none" />
+              <div class="error-message mt-1 text-sm"></div>
+            </div>
+            <div class="mb-4">
+              <input type="tel" name="phone[]" placeholder="Phone" required data-validation="phone"
+                class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white focus:border-neon-blue focus:outline-none" />
+              <div class="error-message mt-1 text-sm"></div>
             </div>
           </div>
 
-          <button type="button" id="add-passenger-btn" class="btn-secondary px-8 py-3 rounded-lg font-bold mt-4">
+          <!-- Dynamic Passengers Container -->
+          <div id="passenger-forms-container"></div>
+
+          <button type="button" id="add-passenger-btn" class="btn-secondary px-8 py-3 rounded-lg font-bold mt-4 bg-neon-blue/20 hover:bg-neon-blue/30 transition">
             Add Passenger
           </button>
         </div>
 
-        <button type="submit" class="btn-primary px-8 py-4 rounded-lg font-bold w-full glow">
+        <button type="submit" class="btn-primary px-8 py-4 rounded-lg font-bold w-full glow bg-gradient-to-r from-neon-blue to-neon-purple hover:from-neon-purple hover:to-neon-blue transition">
           Confirm Booking
         </button>
       </form>
@@ -153,8 +170,9 @@
 
   <footer class="bg-space-dark border-t border-neon-blue/20 py-8 mt-12 text-center">
     <p class="text-gray-400 text-sm">© 2025 SpaceVoyager</p>
-    <script src="amin.js"></script>
   </footer>
+
+  <script src="booking.js"></script>
 </body>
 
 </html>
