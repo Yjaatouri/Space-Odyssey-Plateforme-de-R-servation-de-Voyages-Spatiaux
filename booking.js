@@ -1,28 +1,28 @@
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'space-dark': '#0a0a18',
-                        'space-blue': '#1a1a2e',
-                        'space-purple': '#16213e',
-                        'neon-blue': '#0ea5e9',
-                        'neon-purple': '#8b5cf6',
-                        'neon-cyan': '#06b6d4',
-                    },
-                    fontFamily: {
-                        'orbitron': ['Orbitron', 'sans-serif'],
-                        'exo': ['Exo 2', 'sans-serif'],
-                    },
-                }
-            }
-        }
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        'space-dark': '#0a0a18',
+        'space-blue': '#1a1a2e',
+        'space-purple': '#16213e',
+        'neon-blue': '#0ea5e9',
+        'neon-purple': '#8b5cf6',
+        'neon-cyan': '#06b6d4',
+      },
+      fontFamily: {
+        'orbitron': ['Orbitron', 'sans-serif'],
+        'exo': ['Exo 2', 'sans-serif'],
+      },
+    }
+  }
+};
 
 let accommodationsData = [];
 let destinationsData = [];
 let passengerCount = 1;
 let maxPassengers = 1;
 
-// Crée un fond étoilé (inchangé)
+// creat stars
 function createStars() {
   const container = document.getElementById("stars-container");
   for (let i = 0; i < 100; i++) {
@@ -34,7 +34,7 @@ function createStars() {
   }
 }
 
-// 🧮 Met à jour le prix total
+// update total price
 function updateTotalPrice() {
   const destinationSelect = document.getElementById("destination");
   const totalElem = document.getElementById("total-price-display");
@@ -55,51 +55,57 @@ function updateTotalPrice() {
   totalElem.textContent = `Total: $${total.toLocaleString()} ${dest.currency || ""}`;
 }
 
-// 🧍 Ajoute un passager
+// add passengers
 function addPassengerForm() {
   if (passengerCount >= maxPassengers) return;
   passengerCount++;
   const container = document.getElementById("passenger-forms-container");
   const newDiv = document.createElement("div");
-  newDiv.className = "passenger-form";
+  newDiv.className = "passenger-form mt-6";
   newDiv.innerHTML = `
-    <h3 class="font-orbitron text-neon-blue">Passenger ${passengerCount}</h3>
-    <input type="text" placeholder="First Name" required data-validation="name" />
-    <input type="text" placeholder="Last Name" required data-validation="name" />
-    <input type="email" placeholder="Email" required data-validation="email" />
-    <input type="tel" placeholder="Phone" required data-validation="phone" />
+    <h3 class="font-orbitron text-neon-blue mb-2">Passenger ${passengerCount}</h3>
+    ${createInput("First Name", "name")}
+    ${createInput("Last Name", "name")}
+    ${createInput("Email", "email")}
+    ${createInput("Phone", "phone")}
   `;
   container.appendChild(newDiv);
+
+  newDiv.querySelectorAll("[data-validation]").forEach(attachValidation);
   updateTotalPrice();
 }
 
-// 🔁 Met à jour le nombre max de passagers
+function createInput(placeholder, type) {
+  return `
+  <div class="mb-3">
+    <input type="text" placeholder="${placeholder}" required data-validation="${type}"
+      class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white focus:outline-none transition-colors duration-200" />
+    <div class="error-message text-sm mt-1 text-red-400 hidden"></div>
+  </div>`;
+}
+// passenger
 function updateMaxPassengers() {
   const type = document.querySelector('input[name="passengers"]:checked').value;
   if (type === "solo") maxPassengers = 1;
   if (type === "couple") maxPassengers = 2;
   if (type === "group") maxPassengers = 6;
 
-  // Supprime les passagers en trop
   const forms = document.querySelectorAll(".passenger-form");
   if (forms.length > maxPassengers) {
-    for (let i = forms.length - 1; i >= maxPassengers; i--) {
-      forms[i].remove();
-    }
+    for (let i = forms.length - 1; i >= maxPassengers; i--) forms[i].remove();
     passengerCount = maxPassengers;
   }
-
   updateTotalPrice();
 }
 
-// 🏨 Charge les hébergements
+// load acc
 async function loadAccommodations() {
   const res = await fetch("accommodations.json");
   const data = await res.json();
   accommodationsData = data.accommodations;
 }
 
-// 🌍 Charge les destinations
+// load distination
 async function loadDestinations() {
   const res = await fetch("destinations.json");
   const data = await res.json();
@@ -130,15 +136,14 @@ async function loadDestinations() {
   });
 }
 
-// 🏨 Affiche les hébergements disponibles
+// show acc
 function showAccommodationsForDestination(dest) {
   const container = document.getElementById("accommodations-container");
   container.innerHTML = "";
   const available = accommodationsData.filter(a => dest.accommodations.includes(a.id));
   available.forEach(acc => {
     const card = document.createElement("div");
-    card.className = "accommodation-card";
-    card.dataset.type = acc.id;
+    card.className = "accommodation-card p-4 border border-neon-blue/30 rounded-md cursor-pointer hover:bg-neon-blue/10";
     card.innerHTML = `
       <h3 class="font-orbitron text-neon-blue mb-2">${acc.name}</h3>
       <p class="text-sm text-gray-400">${acc.shortDescription}</p>
@@ -155,113 +160,77 @@ function showAccommodationsForDestination(dest) {
   }
 }
 
-// 🚀 Initialisation
+// regex 
+const patterns = {
+  name: /^[A-Za-zÀ-ÿ\s'-]{2,30}$/,
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  phone: /^\+?\d{7,15}$/
+};
+
+function validateField(input) {
+  const type = input.dataset.validation;
+  const value = input.value.trim();
+  const errorDiv = input.nextElementSibling;
+  let valid = true;
+
+  if (!value) {
+    errorDiv.textContent = "This field is required";
+    errorDiv.classList.remove("hidden");
+    input.style.borderColor = "rgb(239 68 68)"; // red
+    valid = false;
+  } else if (patterns[type] && !patterns[type].test(value)) {
+    errorDiv.textContent = `Invalid ${type}`;
+    errorDiv.classList.remove("hidden");
+    input.style.borderColor = "rgb(239 68 68)"; // red
+    valid = false;
+  } else {
+    errorDiv.textContent = "";
+    errorDiv.classList.add("hidden");
+    input.style.borderColor = "rgb(34 197 94)"; // green
+  }
+
+  return valid;
+}
+
+function attachValidation(input) {
+  input.addEventListener("blur", () => validateField(input));
+  input.addEventListener("input", () => validateField(input));
+}
+
+// init
+
 document.addEventListener("DOMContentLoaded", async () => {
   createStars();
   await loadAccommodations();
   await loadDestinations();
-
   updateMaxPassengers();
 
+  document.querySelectorAll("[data-validation]").forEach(attachValidation);
   document.querySelectorAll('input[name="passengers"]').forEach(r => {
     r.addEventListener("change", updateMaxPassengers);
   });
-
   document.getElementById("add-passenger-btn").addEventListener("click", addPassengerForm);
 });
 
-/* -------------------------------------------------
-   1. Show / hide Suit Size based on destination
-   ------------------------------------------------- */
-function toggleSuitSize(dest) {
-  const suitSection = document.getElementById("suit-size-section");
-  const suitSelect   = document.getElementById("suit-size");
-
-  // Reset previous selection
-  suitSelect.value = "";
-  document.getElementById("suit-size-error").textContent = "";
-
-  if (dest.activities && dest.activities.includes("moonwalk")) {
-    suitSection.classList.remove("hidden");
-    suitSelect.setAttribute("required", "required");
-  } else {
-    suitSection.classList.add("hidden");
-    suitSelect.removeAttribute("required");
-  }
-}
-
-/* -------------------------------------------------
-   2. Hook into destination change
-   ------------------------------------------------- */
-document.getElementById("destination").addEventListener("change", function () {
-  const selected = this.options[this.selectedIndex];
-  const dest = JSON.parse(selected.getAttribute("data-destination"));
-
-  // … existing code you already have …
-  toggleSuitSize(dest);               // <-- NEW
-});
-
-/* -------------------------------------------------
-   3. Form validation (add to your submit handler)
-   ------------------------------------------------- */
+// submit
 document.getElementById("booking-form").addEventListener("submit", function (e) {
+  e.preventDefault();
   let valid = true;
 
-  // ---- Suit Size validation (only when visible) ----
-  const suitSection = document.getElementById("suit-size-section");
-  const suitSelect  = document.getElementById("suit-size");
-  const suitError   = document.getElementById("suit-size-error");
+  document.querySelectorAll("[data-validation]").forEach(input => {
+    if (!validateField(input)) valid = false;
+  });
 
-  if (!suitSection.classList.contains("hidden") && !suitSelect.value) {
-    suitError.textContent = "Please select a suit size.";
-    valid = false;
-  } else {
-    suitError.textContent = "";
+  if (!valid) {
+    alert(" Please fix the errors in the form.");
+    return;
   }
 
-  // … your existing validation logic …
+  alert(" Booking confirmed! Your space journey awaits!");
+  this.reset();
 
-  if (!valid) e.preventDefault();
+  // Reset borders after submit
+  document.querySelectorAll("[data-validation]").forEach(input => {
+    input.style.borderColor = "";
+  });
 });
-
-// nav
-
-document.addEventListener("DOMContentLoaded", function() {
-  createStars();
-
-  const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
-  const navLogin = document.getElementById("nav-login");
-
-  if (loggedUser && navLogin) {
-    navLogin.remove();
-  }
-
-  if (loggedUser) {
-    const header = document.createElement("div");
-    header.className = "text-center mt-6 flex flex-col items-center"; // flex for better control
-
-    // Logout button (first)
-    const logoutBtn = document.createElement("button");
-    logoutBtn.textContent = "Logout";
-    logoutBtn.className =
-      "bg-gradient-to-r from-neon-blue to-neon-purple text-white px-6 py-2 rounded-lg font-bold glow hover:opacity-90 transition";
-
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("loggedUser");
-      alert("You have been logged out!");
-      window.location.href = "login.html";
-    });
-
-    //  Welcome message (second)
-    const welcome = document.createElement("p");
-    welcome.className = "text-neon-blue font-orbitron text-xl mt-4"; // use mt-4 for spacing below button
-    welcome.textContent = `Welcome back, ${loggedUser.email}!`;
-
-    // ✅ Append in the desired order
-    header.appendChild(logoutBtn);
-    header.appendChild(welcome);
-
-    document.body.prepend(header);
-  }
-});
-
