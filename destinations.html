@@ -7,95 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'space-dark': '#0a0a18',
-                        'space-blue': '#1a1a2e',
-                        'space-purple': '#16213e',
-                        'neon-blue': '#0ea5e9',
-                        'neon-purple': '#8b5cf6',
-                        'neon-cyan': '#06b6d4',
-                    },
-                    fontFamily: {
-                        'orbitron': ['Orbitron', 'sans-serif'],
-                        'exo': ['Exo 2', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            background: linear-gradient(to bottom, #0a0a18, #1a1a2e, #16213e);
-            background-attachment: fixed;
-        }
-        
-        .star {
-            position: absolute;
-            background-color: white;
-            border-radius: 50%;
-            animation: twinkle 5s infinite;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-        
-        .glow {
-            box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
-        }
-        
-        .text-glow {
-            text-shadow: 0 0 10px rgba(14, 165, 233, 0.7);
-        }
-        
-        .planet-card {
-            background: rgba(26, 26, 46, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(14, 165, 233, 0.3);
-            border-radius: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .planet-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(14, 165, 233, 0.7);
-            box-shadow: 0 15px 30px rgba(14, 165, 233, 0.3);
-        }
-        
-        .nav-link {
-            position: relative;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(to right, #0ea5e9, #8b5cf6);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(to right, #0ea5e9, #8b5cf6);
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(14, 165, 233, 0.4);
-        }
-    </style>
+    <link rel="stylesheet" href="destination.css">
+    <script src="destination.js"></script>
+      
+
+
 </head>
 <body class="text-white font-exo min-h-screen">
     <!-- Stars Background -->
@@ -116,7 +32,8 @@
                 <a href="destinations.html" class="nav-link hover:text-neon-blue transition-colors text-neon-blue">Destinations</a>
                 <a href="booking.html" class="nav-link hover:text-neon-blue transition-colors">Booking</a>
                 <a href="about.html" class="nav-link hover:text-neon-blue transition-colors">About</a>
-                <a href="login.html" class="nav-link hover:text-neon-blue transition-colors">Login</a>
+                <a id="nav-login" href="login.html">Login</a>
+
             </div>
             
             <div class="md:hidden">
