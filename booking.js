@@ -22,12 +22,12 @@ let destinationsData = [];
 let passengerCount = 1;
 let maxPassengers = 1;
 
-// creat stars
+// create stars
 function createStars() {
   const container = document.getElementById("stars-container");
   for (let i = 0; i < 100; i++) {
     const s = document.createElement("div");
-    s.classList.add("star");
+    s.classList.add("star");                                                 
     s.style.left = `${Math.random() * 100}%`;
     s.style.top = `${Math.random() * 100}%`;
     container.appendChild(s);
@@ -83,6 +83,7 @@ function createInput(placeholder, type) {
     <div class="error-message text-sm mt-1 text-red-400 hidden"></div>
   </div>`;
 }
+
 // passenger
 function updateMaxPassengers() {
   const type = document.querySelector('input[name="passengers"]:checked').value;
@@ -105,7 +106,7 @@ async function loadAccommodations() {
   accommodationsData = data.accommodations;
 }
 
-// load distination
+// load destination
 async function loadDestinations() {
   const res = await fetch("destinations.json");
   const data = await res.json();
@@ -115,7 +116,7 @@ async function loadDestinations() {
   destinationsData.forEach(dest => {
     const opt = document.createElement("option");
     opt.value = dest.id;
-    opt.textContent = `${dest.name} — $${dest.price}`;
+    opt.textContent = `${dest.name} – $${dest.price}`;
     opt.setAttribute("data-destination", JSON.stringify(dest));
     select.appendChild(opt);
   });
@@ -197,8 +198,65 @@ function attachValidation(input) {
   input.addEventListener("input", () => validateField(input));
 }
 
-// init
+// Function to collect passenger data from form
+function collectPassengerData() {
+  const passengers = [];
+  const passengerForms = document.querySelectorAll(".passenger-form");
+  
+  passengerForms.forEach((form, index) => {
+    const inputs = form.querySelectorAll("input[data-validation]");
+    const passenger = {
+      id: Date.now() + index, // Unique ID for each passenger
+      firstName: inputs[0]?.value.trim() || "",
+      lastName: inputs[1]?.value.trim() || "",
+      email: inputs[2]?.value.trim() || "",
+      phone: inputs[3]?.value.trim() || "",
+      isPrimary: index === 0
+    };
+    passengers.push(passenger);
+  });
+  
+  return passengers;
+}
 
+// Function to save passengers to localStorage
+function savePassengersToLocalStorage(passengers) {
+  try {
+    // Get existing passengers from localStorage
+    const existingPassengers = JSON.parse(localStorage.getItem("passengers") || "[]");
+    
+    // Add new passengers with booking date
+    const passengersWithDate = passengers.map(p => ({
+      ...p,
+      bookingDate: new Date().toISOString(),
+      destination: document.getElementById("destination").options[document.getElementById("destination").selectedIndex]?.text || "",
+      departureDate: document.getElementById("departure-date").value
+    }));
+    
+    // Combine with existing passengers
+    const allPassengers = [...existingPassengers, ...passengersWithDate];
+    
+    // Save to localStorage
+    localStorage.setItem("passengers", JSON.stringify(allPassengers));
+    
+    return true;
+  } catch (error) {
+    console.error("Error saving to localStorage:", error);
+    return false;
+  }
+}
+
+// Function to retrieve passengers from localStorage
+function getPassengersFromLocalStorage() {
+  try {
+    return JSON.parse(localStorage.getItem("passengers") || "[]");
+  } catch (error) {
+    console.error("Error reading from localStorage:", error);
+    return [];
+  }
+}
+
+// init
 document.addEventListener("DOMContentLoaded", async () => {
   createStars();
   await loadAccommodations();
@@ -226,11 +284,40 @@ document.getElementById("booking-form").addEventListener("submit", function (e) 
     return;
   }
 
-  alert(" Booking confirmed! Your space journey awaits!");
+  // Collect passenger data
+  const passengers = collectPassengerData();
+  
+  // Save to localStorage
+  const saved = savePassengersToLocalStorage(passengers);
+  
+  if (saved) {
+    alert("Booking confirmed! Your space journey awaits!\n\n👥 Passenger data has been saved.");
+    console.log("Saved passengers:", passengers);
+    console.log("All passengers in localStorage:", getPassengersFromLocalStorage());
+  } else {
+    alert(" Booking confirmed! Your space journey awaits!\n\n Note: Passenger data could not be saved.");
+  }
+  
   this.reset();
 
   // Reset borders after submit
   document.querySelectorAll("[data-validation]").forEach(input => {
     input.style.borderColor = "";
   });
+  
+  // Hide destination info
+  document.getElementById("destination-info").classList.add("hidden");
+  
+  // Reset passenger count
+  document.getElementById("passenger-forms-container").innerHTML = "";
+  passengerCount = 1;
 });
+// ----- inside the submit handler, after you saved the data -----
+if (saved) {
+  alert("Booking confirmed! Your space journey awaits!\n\nPassenger data has been saved.");
+  // ---- NEW LINE ----
+  window.location.href = "mybooking.html";   // <-- go to the receipt page
+} else {
+  alert("Booking confirmed! Your space journey awaits!\n\nNote: Passenger data could not be saved.");
+  window.location.href = "mybooking.html";
+}
