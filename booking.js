@@ -55,25 +55,76 @@ function updateTotalPrice() {
   totalElem.textContent = `Total: $${total.toLocaleString()} ${dest.currency || ""}`;
 }
 
-// add passengers
+/* --------------------------------------------------------------
+   1.  Add a “Remove” button to every extra passenger form
+   -------------------------------------------------------------- */
 function addPassengerForm() {
   if (passengerCount >= maxPassengers) return;
   passengerCount++;
+
   const container = document.getElementById("passenger-forms-container");
   const newDiv = document.createElement("div");
-  newDiv.className = "passenger-form mt-6";
+  newDiv.className = "passenger-form mt-6 relative";
+
+  // ----- NEW: remove button -------------------------------------------------
+  const removeBtn = `<button type="button" class="remove-passenger-btn absolute top-0 right-0 -mt-2 -mr-2 w-8 h-8 rounded-full bg-red-600/80 hover:bg-red-700 flex items-center justify-center text-white text-xs font-bold transition">
+                       ×
+                     </button>`;
+  // -------------------------------------------------------------------------
+
   newDiv.innerHTML = `
-    <h3 class="font-orbitron text-neon-blue mb-2">Passenger ${passengerCount}</h3>
+    <h3 class="font-orbitron text-neon-blue mb-2 pr-8">Passenger ${passengerCount}</h3>
+    ${removeBtn}
     ${createInput("First Name", "name")}
     ${createInput("Last Name", "name")}
     ${createInput("Email", "email")}
     ${createInput("Phone", "phone")}
   `;
+
   container.appendChild(newDiv);
 
+  // attach validation to the new inputs
   newDiv.querySelectorAll("[data-validation]").forEach(attachValidation);
+
+  // ----- NEW: click-handler for the remove button ---------------------------
+  newDiv.querySelector(".remove-passenger-btn").addEventListener("click", () => {
+    newDiv.remove();
+    passengerCount--;
+    renumberPassengerHeaders();   // keep the numbers correct
+    updateTotalPrice();
+  });
+  // -------------------------------------------------------------------------
+
   updateTotalPrice();
 }
+
+/* --------------------------------------------------------------
+   2.  Renumber the headings after a passenger is removed
+   -------------------------------------------------------------- */
+function renumberPassengerHeaders() {
+  const forms = document.querySelectorAll(".passenger-form");
+  forms.forEach((form, idx) => {
+    const header = form.querySelector("h3");
+    if (header) {
+      header.textContent = idx === 0 ? "Primary Passenger" : `Passenger ${idx + 1}`;
+    }
+  });
+}
+
+/* --------------------------------------------------------------
+   3.  (Optional) also allow removing the *primary* passenger
+       – we just hide the button for the first form
+   -------------------------------------------------------------- */
+document.addEventListener("DOMContentLoaded", async () => {
+  // … existing init code …
+
+  // hide remove button on the primary passenger (index 0)
+  const primaryForm = document.getElementById("passenger-form-0");
+  if (primaryForm) {
+    primaryForm.classList.add("relative");
+    // no button needed – primary passenger cannot be deleted
+  }
+});
 
 function createInput(placeholder, type) {
   return `
