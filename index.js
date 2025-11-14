@@ -19,9 +19,7 @@
                 }
             }
         }
-
-        // 
-
+        
         // Create stars background
         function createStars() {
             const container = document.getElementById('stars-container');

@@ -1,4 +1,4 @@
-// booking.js – FULLY FIXED VERSION
+// booking.js – FULLY FIXED VERSION WITH PRICE CALCULATOR
 tailwind.config = {
   theme: {
     extend: {
@@ -22,51 +22,6 @@ const user = JSON.parse(localStorage.getItem("loggedUser"));
 const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
 const navLogin = document.getElementById("nav-login");
 
-
-if (user) {
-  const welcome = document.createElement("p");
-  welcome.className = "text-neon-blue font-orbitron mt-4 text-center";
-  welcome.textContent = ` Welcome, ${user.email}!`;
-  document.body.prepend(welcome);
-}
-
-// logged out
-// ===============================
-// SpaceVoyager - User Session System
-// ===============================
-
-// Get the logged user from localStorage
-
-
-// If no user → redirect to login page
-if (user) {
-  // Display welcome message
-  const header = document.createElement("div");
-  header.className = "text-center mt-6";
-
-  const welcome = document.createElement("p");
-  welcome.className = "text-neon-blue font-orbitron text-xl mb-4";
-
-
-  const logoutBtn = document.createElement("button");
-  logoutBtn.textContent = "Logout";
-  logoutBtn.className =
-    "bg-gradient-to-r from-neon-blue to-neon-purple text-white px-6 py-2 rounded-lg font-bold glow hover:opacity-90 transition";
-
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("loggedUser"); // remove session
-    alert(" You have been logged out!");
-    window.location.href = "login.html"; // redirect back
-  });
-
-  header.appendChild(welcome);
-  header.appendChild(logoutBtn);
-  document.body.prepend(header);
-}
-if (loggedUser && navLogin) {
-    navLogin.remove();
-}
-
 let accommodationsData = [];
 let destinationsData = [];
 let passengerCount = 1;
@@ -86,7 +41,7 @@ function createStars() {
   }
 }
 
-// Mobile menu toggle (critical!)
+// Mobile menu toggle
 document.addEventListener("DOMContentLoaded", () => {
   const mobileBtn = document.getElementById("mobile-menu-button");
   const mobileMenu = document.getElementById("mobile-menu");
@@ -95,6 +50,35 @@ document.addEventListener("DOMContentLoaded", () => {
     mobileBtn.addEventListener("click", () => {
       mobileMenu.classList.toggle("hidden");
     });
+  }
+
+  // User session handling
+  if (user) {
+    const welcome = document.createElement("p");
+    welcome.className = "text-neon-blue font-orbitron mt-4 text-center";
+    welcome.textContent = `Welcome, ${user.email}!`;
+    document.body.prepend(welcome);
+
+    const logoutBtn = document.createElement("button");
+    logoutBtn.textContent = "Logout";
+    logoutBtn.className = "bg-gradient-to-r from-neon-blue to-neon-purple text-white px-6 py-2 rounded-lg font-bold glow hover:opacity-90 transition ml-4";
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("loggedUser");
+      localStorage.removeItem("loggedIn");
+      alert("You have been logged out!");
+      window.location.href = "login.html";
+    });
+    welcome.appendChild(logoutBtn);
+  }
+
+  if (loggedUser && navLogin) {
+    navLogin.remove();
+  }
+
+  // Remove login link if logged in
+  const loginLink = document.getElementById("nav-login");
+  if (localStorage.getItem("loggedIn") === "true" && loginLink) {
+    loginLink.remove();
   }
 
   createStars();
@@ -118,6 +102,8 @@ async function loadAccommodations() {
     accommodationsData = data.accommodations;
 
     const container = document.getElementById("accommodations-container");
+    if (!container) return;
+    
     container.innerHTML = "";
 
     accommodationsData.forEach(acc => {
@@ -129,14 +115,20 @@ async function loadAccommodations() {
         <div class="mt-2 text-xs text-gray-500">$${acc.pricePerDay}/day</div>
       `;
       card.onclick = () => {
-        document.getElementById("accommodation").value = acc.id;
-        updateTotalPrice();
+        const accField = document.getElementById("accommodation");
+        if (accField) {
+          accField.value = acc.id;
+          updateTotalPrice();
+        }
       };
       container.appendChild(card);
     });
 
     if (accommodationsData.length > 0) {
-      document.getElementById("accommodation").value = accommodationsData[0].id;
+      const accField = document.getElementById("accommodation");
+      if (accField) {
+        accField.value = accommodationsData[0].id;
+      }
     }
   } catch (err) {
     console.error("Failed to load accommodations:", err);
@@ -151,6 +143,8 @@ async function loadDestinations() {
     destinationsData = data.destinations;
 
     const select = document.getElementById("destination");
+    if (!select) return;
+    
     select.innerHTML = '<option value="">Select your destination</option>';
 
     destinationsData.forEach(dest => {
@@ -164,19 +158,29 @@ async function loadDestinations() {
     select.addEventListener("change", () => {
       const selected = select.options[select.selectedIndex];
       if (!selected.value) {
-        document.getElementById("destination-info").classList.add("hidden");
+        const destInfo = document.getElementById("destination-info");
+        if (destInfo) destInfo.classList.add("hidden");
         return;
       }
       const dest = JSON.parse(selected.getAttribute("data-destination"));
 
-      document.getElementById("destination-name").textContent = dest.name;
-      document.getElementById("destination-description").textContent = dest.description;
-      document.getElementById("destination-duration").textContent = dest.duration;
-      document.getElementById("destination-distance").textContent = dest.distance;
-      document.getElementById("destination-gravity").textContent = dest.gravity;
-      document.getElementById("destination-temperature").textContent = dest.temperature;
-      document.getElementById("destination-price").textContent = `$${dest.price.toLocaleString()}`;
-      document.getElementById("destination-info").classList.remove("hidden");
+      const elements = {
+        'destination-name': dest.name,
+        'destination-description': dest.description,
+        'destination-duration': dest.travelDuration,
+        'destination-distance': dest.distance,
+        'destination-gravity': dest.gravity,
+        'destination-temperature': dest.temperature,
+        'destination-price': `$${dest.price.toLocaleString()}`
+      };
+
+      Object.entries(elements).forEach(([id, value]) => {
+        const elem = document.getElementById(id);
+        if (elem) elem.textContent = value;
+      });
+
+      const destInfo = document.getElementById("destination-info");
+      if (destInfo) destInfo.classList.remove("hidden");
 
       updateTotalPrice();
     });
@@ -185,24 +189,53 @@ async function loadDestinations() {
   }
 }
 
-// Update total price
+// Update total price WITH PRICE CALCULATOR - FIXED
 function updateTotalPrice() {
   const destinationSelect = document.getElementById("destination");
   const totalElem = document.getElementById("total-price-display");
-  if (!destinationSelect.value) {
-    totalElem.textContent = "";
+  const priceCalculator = document.getElementById("price-calculator");
+  
+  if (!destinationSelect || !destinationSelect.value) {
+    if (totalElem) totalElem.textContent = "";
+    if (priceCalculator) priceCalculator.classList.add("hidden");
     return;
   }
 
   const dest = JSON.parse(destinationSelect.selectedOptions[0].getAttribute("data-destination"));
   const basePrice = dest.price || 0;
 
-  const accId = document.getElementById("accommodation").value;
+  const accId = document.getElementById("accommodation")?.value;
   const acc = accommodationsData.find(a => a.id === accId);
   const accPrice = acc ? acc.pricePerDay : 0;
+  const travelDurDay = dest.travelDurDay || 1;
 
-  const total = (basePrice + accPrice) * passengerCount;
-  totalElem.textContent = `Total: $${total.toLocaleString()}`;
+  // FIXED: Calculate subtotal first, then total
+  const subtotal = basePrice + accPrice;
+  const total = subtotal * passengerCount * travelDurDay;
+  
+  // Update old display
+  if (totalElem) {
+    totalElem.textContent = `Total: $${total.toLocaleString()}`;
+  }
+  
+  // Update price calculator if it exists
+  if (priceCalculator) {
+    const calcElements = {
+      'calc-base-price': `$${basePrice.toLocaleString()}`,
+      'calc-accommodation-price': `$${accPrice.toLocaleString()}`,
+      'calc-passenger-count': passengerCount,
+      'calc-subtotal': `$${subtotal.toLocaleString()}`,
+      'calc-total-price': `$${total.toLocaleString()}`
+    };
+
+    Object.entries(calcElements).forEach(([id, value]) => {
+      const elem = document.getElementById(id);
+      if (elem) elem.textContent = value;
+    });
+    
+    // Show calculator
+    priceCalculator.classList.remove("hidden");
+  }
 }
 
 // Add passenger
@@ -211,6 +244,8 @@ function addPassengerForm() {
   passengerCount++;
 
   const container = document.getElementById("passenger-forms-container");
+  if (!container) return;
+
   const div = document.createElement("div");
   div.className = "passenger-form mt-8 relative";
 
@@ -218,25 +253,37 @@ function addPassengerForm() {
     <button type="button" class="remove-passenger-btn absolute top-0 right-0 -mt-2 -mr-2 w-8 h-8 rounded-full bg-red-600/80 hover:bg-red-700 text-white text-xs font-bold">×</button>
     <h3 class="font-orbitron text-neon-blue mb-4 pr-8">Passenger ${passengerCount}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <input type="text" placeholder="First Name" required data-validation="name" class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white">
-      <input type="text" placeholder="Last Name" required data-validation="name" class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white">
-      <input type="email" placeholder="Email" required data-validation="email" class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white">
-      <input type="tel" placeholder="Phone" required data-validation="phone" class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white">
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-      ${" ".repeat(4)} <!-- placeholder -->
+      <div>
+        <input type="text" placeholder="First Name" required data-validation="name" class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white">
+        <div class="error-message text-red-500 text-xs mt-1 hidden"></div>
+      </div>
+      <div>
+        <input type="text" placeholder="Last Name" required data-validation="name" class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white">
+        <div class="error-message text-red-500 text-xs mt-1 hidden"></div>
+      </div>
+      <div>
+        <input type="email" placeholder="Email" required data-validation="email" class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white">
+        <div class="error-message text-red-500 text-xs mt-1 hidden"></div>
+      </div>
+      <div>
+        <input type="tel" placeholder="Phone" required data-validation="phone" class="w-full h-12 rounded-md border border-gray-600 bg-space-dark/70 px-4 text-white">
+        <div class="error-message text-red-500 text-xs mt-1 hidden"></div>
+      </div>
     </div>
   `;
 
   container.appendChild(div);
   div.querySelectorAll("[data-validation]").forEach(attachValidation);
 
-  div.querySelector(".remove-passenger-btn").addEventListener("click", () => {
-    div.remove();
-    passengerCount--;
-    renumberPassengerHeaders();
-    updateTotalPrice();
-  });
+  const removeBtn = div.querySelector(".remove-passenger-btn");
+  if (removeBtn) {
+    removeBtn.addEventListener("click", () => {
+      div.remove();
+      passengerCount--;
+      renumberPassengerHeaders();
+      updateTotalPrice();
+    });
+  }
 
   updateTotalPrice();
 }
@@ -249,7 +296,10 @@ function renumberPassengerHeaders() {
 }
 
 function updateMaxPassengers() {
-  const type = document.querySelector('input[name="passengers"]:checked').value;
+  const checked = document.querySelector('input[name="passengers"]:checked');
+  if (!checked) return;
+  
+  const type = checked.value;
   maxPassengers = type === "solo" ? 1 : type === "couple" ? 2 : 6;
 
   const forms = document.querySelectorAll(".passenger-form");
@@ -271,6 +321,8 @@ function validateField(input) {
   const type = input.dataset.validation;
   const value = input.value.trim();
   const errorDiv = input.parentElement.querySelector(".error-message") || input.nextElementSibling;
+
+  if (!errorDiv) return true;
 
   if (!value) {
     errorDiv.textContent = "Required";
@@ -311,11 +363,14 @@ function collectPassengerData() {
 }
 
 function saveBooking(passengers) {
+  const destinationSelect = document.getElementById("destination");
+  const departureDateField = document.getElementById("departure-date");
+  
   const booking = {
     id: Date.now(),
     bookingDate: new Date().toISOString(),
-    destination: document.getElementById("destination").selectedOptions[0].text,
-    departureDate: document.getElementById("departure-date").value,
+    destination: destinationSelect ? destinationSelect.selectedOptions[0].text : "",
+    departureDate: departureDateField ? departureDateField.value : "",
     passengers: passengers,
     totalPassengers: passengers.length
   };
@@ -326,55 +381,28 @@ function saveBooking(passengers) {
 }
 
 // Submit
-document.getElementById("booking-form").addEventListener("submit", function (e) {
-  e.preventDefault();
+const bookingForm = document.getElementById("booking-form");
+if (bookingForm) {
+  bookingForm.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  let valid = true;
-  document.querySelectorAll("[data-validation], #destination, #departure-date").forEach(field => {
-    if (!field.value.trim() || (field.dataset.validation && !validateField(field))) {
-      valid = false;
+    let valid = true;
+    document.querySelectorAll("[data-validation], #destination, #departure-date").forEach(field => {
+      if (!field.value.trim() || (field.dataset.validation && !validateField(field))) {
+        valid = false;
+      }
+    });
+
+    if (!valid) {
+      alert("Please fix all errors before submitting.");
+      return;
     }
+
+    const passengers = collectPassengerData();
+    saveBooking(passengers);
+
+    localStorage.setItem("loggedIn", "true");
+    alert("Booking Confirmed! Taking you to your receipt...");
+    window.location.href = "Mbooking.html";
   });
-
-  if (!valid) {
-    alert("Please fix all errors before submitting.");
-    return;
-  }
-
-  const passengers = collectPassengerData();
-  saveBooking(passengers);
-
-  alert("Booking Confirmed! Taking you to your receipt...");
-  window.location.href = "Mbooking.html";
-});
-
-localStorage.setItem("loggedIn", "true");
-document.addEventListener("DOMContentLoaded", () => {
-    const loginLink = document.getElementById("nav-login");
-
-    if (localStorage.getItem("loggedIn") === "true" && loginLink) {
-        loginLink.remove();
-    }
-
-    // YOUR PAGE CODE HERE...
-});
-document.addEventListener("DOMContentLoaded", () => {
-
-    // 🔥 REMOVE LOGIN FROM NAV IF USER LOGGED IN
-    const loginLink = document.getElementById("nav-login");
-    if (localStorage.getItem("loggedIn") === "true" && loginLink) {
-        loginLink.remove();
-    }
-
-    // ⬇️ keep your original code here
-    createStars();
-    loadAccommodations();
-    loadDestinations();
-    updateMaxPassengers();
-    document.querySelectorAll("[data-validation]").forEach(attachValidation);
-    document.querySelectorAll('input[name="passengers"]').forEach(r =>
-        r.addEventListener("change", updateMaxPassengers)
-    );
-    document.getElementById("add-passenger-btn")?.addEventListener("click", addPassengerForm);
-
-});
+}

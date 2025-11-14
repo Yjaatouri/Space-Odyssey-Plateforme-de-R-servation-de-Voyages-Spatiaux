@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Book Your Journey — SpaceVoyager</title>
+  <title>Book Your Journey – SpaceVoyager</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -101,6 +101,57 @@
             <div id="accommodations-container" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
             <input type="hidden" id="accommodation" value="" />
             <div class="error-message" id="accommodation-error"></div>
+          </div>
+
+          <!-- PRICE CALCULATOR DIV -->
+          <div id="price-calculator" class="hidden mt-8 p-6 bg-gradient-to-br from-space-dark/90 to-space-blue/50 rounded-xl border-2 border-neon-cyan/40 backdrop-blur-sm">
+            <h3 class="font-orbitron text-2xl mb-4 text-neon-cyan text-center">
+              <i class="fas fa-calculator mr-2"></i>Price Breakdown
+            </h3>
+            
+            <div class="space-y-3">
+              <!-- Base Price -->
+              <div class="flex justify-between items-center py-2 border-b border-neon-blue/20">
+                <span class="text-gray-300">
+                  <i class="fas fa-rocket text-neon-blue mr-2"></i>Base Destination Price
+                </span>
+                <span class="font-bold text-white" id="calc-base-price">$0</span>
+              </div>
+
+              <!-- Accommodation -->
+              <div class="flex justify-between items-center py-2 border-b border-neon-blue/20">
+                <span class="text-gray-300">
+                  <i class="fas fa-bed text-neon-purple mr-2"></i>Accommodation (per day)
+                </span>
+                <span class="font-bold text-white" id="calc-accommodation-price">$0</span>
+              </div>
+
+              <!-- Number of Passengers -->
+              <div class="flex justify-between items-center py-2 border-b border-neon-blue/20">
+                <span class="text-gray-300">
+                  <i class="fas fa-users text-neon-cyan mr-2"></i>Number of Passengers
+                </span>
+                <span class="font-bold text-white" id="calc-passenger-count">1</span>
+              </div>
+
+              <!-- Subtotal -->
+              <div class="flex justify-between items-center py-3 mt-2">
+                <span class="text-gray-300 text-lg">Subtotal per Passenger</span>
+                <span class="font-bold text-neon-blue text-lg" id="calc-subtotal">$0</span>
+              </div>
+
+              <!-- Total -->
+              <div class="flex justify-between items-center py-4 mt-2 bg-gradient-to-r from-neon-blue/20 to-neon-purple/20 rounded-lg px-4 border border-neon-blue/30">
+                <span class="font-orbitron text-xl text-white">
+                  <i class="fas fa-star text-yellow-400 mr-2"></i>TOTAL PRICE
+                </span>
+                <span class="font-orbitron text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple" id="calc-total-price">$0</span>
+              </div>
+            </div>
+
+            <div class="mt-4 text-center text-xs text-gray-400">
+              <i class="fas fa-info-circle mr-1"></i>Prices are calculated based on your selections
+            </div>
           </div>
         </div>
 
