@@ -27,7 +27,7 @@ const navLogin = document.getElementById("nav-login");
 
 if (user) {
   const welcome = document.createElement("p");
-  welcome.className = "text-neon-blue font-orbitron mt-4 text-center";
+  // welcome.className = "text-neon-blue font-orbitron mt-4 text-center";
   welcome.textContent = ` Welcome, ${user.email}!`;
   document.body.prepend(welcome);
 }
